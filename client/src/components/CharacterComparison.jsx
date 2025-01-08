@@ -9,13 +9,13 @@ function CharacterComparison() {
 
   const handleCompare = async () => {
     try {
-      const compareResponse = await fetch('http://localhost:5000/compare-characters', {
+      const compareResponse = await fetch('http://localhost:5000/get-characters-for-comparison', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ character1, character2 }),
       });
       const compareData = await compareResponse.json();
 
-      const winnerResponse = await fetch('http://localhost:5000/new', {
+      const winnerResponse = await fetch('http://localhost:5000/compare-character-heights', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ character1, character2 }),
@@ -28,7 +28,7 @@ function CharacterComparison() {
   };
 
   const fetchCharacterImage = async (name, setImage) => {
-    const response = await fetch('http://localhost:5000/get-character-image', {
+    const response = await fetch('http://localhost:5000/character-image', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ character_name: name }),
     });

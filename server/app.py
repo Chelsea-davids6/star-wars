@@ -5,9 +5,9 @@ import requests
 app = Flask(__name__)
 CORS(app)
 
-SWAPI_BASE_URL = "https://www.swapi.tech/api/people"
+SWAPI_BASE_URL = "https://www.swapi.tech/api/people"\
 
-def search_character_by_name(name):
+def fetch_character_details_from_api(name):
     page = 1
     found_character = None
     while True:
@@ -33,14 +33,14 @@ def search_character_by_name(name):
 
     return None
 
-@app.route('/new', methods=['POST'])
-def new():
+@app.route('/compare-character-heights', methods=['POST'])
+def compare_character_heights():
     data = request.get_json()
     char1 = data.get('character1')
     char2 = data.get('character2')
 
-    result1 = search_character_by_name(char1)
-    result2 = search_character_by_name(char2)
+    result1 = fetch_character_details_from_api(char1)
+    result2 = fetch_character_details_from_api(char2)
 
     if not result1 or not result2:
         return jsonify({"error": "Character(s) not found"}), 404
@@ -64,8 +64,8 @@ def new():
         "character2_height": height2
     })
 
-@app.route('/compare-characters', methods=['POST'])
-def compare_characters():
+@app.route('/get-characters-for-comparison', methods=['POST'])
+def get_characters_for_comparison():
     print("Request received at /compare-characters")
     data = request.get_json()
     character1 = data.get('character1', None)
@@ -75,8 +75,8 @@ def compare_characters():
         print("Error: Missing character names")
         return jsonify({"error": "Character names required"}), 400
 
-    char1_data = search_character_by_name(character1)
-    char2_data = search_character_by_name(character2)
+    char1_data = fetch_character_details_from_api(character1)
+    char2_data = fetch_character_details_from_api(character2)
 
     if not char1_data:
         print(f"Character '{character1}' not found")
@@ -88,7 +88,7 @@ def compare_characters():
         "character2": char2_data or "Character not found"
     })
 
-def get_image_url(character_name):
+def fetch_character_image_url(character_name):
     character_name = ' '.join(word.capitalize() for word in character_name.split())
     url = "https://en.wikipedia.org/w/api.php"
 
@@ -132,8 +132,8 @@ def get_image_url(character_name):
             return image_info[0]["url"]
     return None
 
-@app.route('/get-character-image', methods=['POST'])
-def get_character_image():
+@app.route('/character-image', methods=['POST'])
+def character_image():
     print("Fetching character image")
     data = request.get_json()
     name = data.get('character_name', "")
@@ -141,7 +141,7 @@ def get_character_image():
         print("Error: No name provided")
         return jsonify({"error": "No name provided"}), 400
 
-    image_url = get_image_url(name)
+    image_url = fetch_character_image_url(name)
     if not image_url:
         return jsonify({"error": "No image found"}), 404
 
